@@ -2,18 +2,28 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 const speed = 3000;
+const melt = true;
+const dotAppear = true;
 
 interface ISlider {
   speed: number;
+  melt: boolean;
+  dotAppear: boolean;
 }
 
 class Slider extends React.Component<ISlider, { count: number }> {
   speed: number;
   slides: any;
+  melt: boolean;
+  slideStyle: string;
+  dotAppear: boolean;
 
   constructor(props: ISlider) {
     super(props);
     this.speed = props.speed || 3000;
+    this.melt = props.melt || false;
+    this.dotAppear = props.dotAppear || false;
+    this.slideStyle = 'active';
 
     this.state = {
       count: 0,
@@ -28,13 +38,17 @@ class Slider extends React.Component<ISlider, { count: number }> {
     }, this.speed);
   }
 
+  dotAppearSlide(): void {
+    this.slideStyle = 'dot-current';
+  }
+
   showSlides() {
     const { children } = this.props;
 
     this.slides = React.Children.map(children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
         key: index,
-        className: (index === this.state.count ? 'active' : 'slide'),
+        className: (index === this.state.count ? `${this.slideStyle}` : 'slide'),
       }));
 
     return (
@@ -46,6 +60,7 @@ class Slider extends React.Component<ISlider, { count: number }> {
 
   render() {
     this.autoplay();
+    if (this.dotAppear) this.dotAppearSlide();
 
     return (
       this.showSlides()
@@ -54,7 +69,7 @@ class Slider extends React.Component<ISlider, { count: number }> {
 }
 
 ReactDOM.render(
-  <Slider speed={speed}>
+  <Slider speed={speed} melt={melt} dotAppear={dotAppear}>
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
     </div>
