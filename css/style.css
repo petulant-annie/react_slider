@@ -8,7 +8,6 @@
   display: flex;
   position: relative;
   overflow: hidden;
-  border: 2px solid #E0E0E0;
   height: 100%;
 }
 
@@ -64,24 +63,17 @@
   display: inline-block;
 }
 
-.melt-previous{
-  margin: 0 auto;
-  padding: 5px;
-  font-size: 0;
-  display: inline-block;
-}
-
 .melt-current{
   margin: 0 auto;
   padding: 5px;
   font-size: 0;
   animation-name: melt-appear;
-  animation-duration: 0.5s;
+  animation-duration: 0.3s;
 }
 
 @keyframes melt-appear {
   0% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   100% {
     opacity: 1;

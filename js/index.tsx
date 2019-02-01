@@ -39,6 +39,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
       this.state.current + 1 < this.slides.length ?
         this.setState({ current: this.state.current + 1 }) :
         this.setState({ current: 0 });
+    // tslint:disable-next-line:align
     }, this.speed);
   }
 
@@ -50,12 +51,6 @@ class Slider extends React.Component<ISlider, { current: number }> {
     return 'active';
   }
 
-  // classNameProps(index: number) {
-  //   const a = (index === this.state.current ? `${this.animate()}` : 'slide');
-
-  //   return a;
-  // }
-
   getSlides() {
     const { children } = this.props;
 
@@ -63,6 +58,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
       React.cloneElement(child, {
         key: index,
         className: (index === this.state.current ? `${this.animate()}` : 'slide'),
+        style: { border: '2px solid #E0E0E0' },
       }));
 
     return (
