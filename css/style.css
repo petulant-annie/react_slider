@@ -77,12 +77,11 @@
   font-size: 0;
   animation-name: melt-appear;
   animation-duration: 0.5s;
-  position: absolute;
 }
 
 @keyframes melt-appear {
   0% {
-    opacity: 0;
+    opacity: 0.5;
   }
   100% {
     opacity: 1;
