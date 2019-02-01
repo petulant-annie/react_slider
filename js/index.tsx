@@ -29,6 +29,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
   dotAppear: boolean;
   meltAppear: boolean;
   slideshowAppear: boolean;
+  onGenericEvent: (event: React.SyntheticEvent<{value: string}>) => void;
 
   constructor(props: ISlider) {
     super(props);
@@ -47,22 +48,25 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   createControls() {
-
-    return (
-      <div className="controls">
-        <img className="prevBtn" src={require('../assets/icons/icons-arrow.png')} title="Arrow" />
-        <img className="nextBtn" src={require('../assets/icons/icons-arrow.png')} title="Arrow" />
-      </div>
-    );
+    if (this.controls) {
+      return (
+        <div className="controls">
+          <img className="prevBtn" src={require('../assets/icons/icons-arrow.png')} />
+          <div>
+          <img className="nextBtn" src={require('../assets/icons/icons-arrow.png')} />
+        </div>
+        </div>
+      );
+    }
+  }
+  moveForvard(): void {
+    this.state.current + 1 < this.slides.length ?
+      this.setState({ current: this.state.current + 1 }) :
+      this.setState({ current: 0 });
   }
 
   autoplay() {
-    setTimeout(() => {
-      this.state.current + 1 < this.slides.length ?
-        this.setState({ current: this.state.current + 1 }) :
-        this.setState({ current: 0 });
-      // tslint:disable-next-line:align
-    }, this.speed);
+    setTimeout(() => { this.moveForvard(); }, this.speed);
   }
 
   animate() {
