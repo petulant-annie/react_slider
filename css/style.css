@@ -3,11 +3,15 @@
   margin: 0;
 }
 
+#root {
+  text-align: center;
+}
+
 #slider {
-  margin: auto;
-  display: flex;
+  margin: 0 auto;
+  display: inline-block;
   position: relative;
-  overflow: hidden;
+  border: 2px solid #E0E0E0;
   height: 100%;
 }
 
@@ -63,12 +67,12 @@
   display: inline-block;
 }
 
-.melt-current{
+.melt-current {
   margin: 0 auto;
   padding: 5px;
   font-size: 0;
   animation-name: melt-appear;
-  animation-duration: 0.3s;
+  animation-duration: 0.7s;
 }
 
 @keyframes melt-appear {
@@ -109,11 +113,11 @@
   z-index: 2;
 }
 
-.slide-out-to-left{
+.slide-out-to-left {
   animation-name: slide-out-to-left;
 }
 
-.slide-out-to-right{
+.slide-out-to-right {
   animation-name: slide-out-to-right;
 }
 
@@ -148,11 +152,11 @@
   z-index: 3;
 }
 
-.slide-in-from-right{
+.slide-in-from-right {
   animation-name: slide-in-from-right;
 }
 
-.slide-in-from-left{
+.slide-in-from-left {
   animation-name: slide-in-from-left;
 }
 

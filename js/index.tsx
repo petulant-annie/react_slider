@@ -2,12 +2,18 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 const speed = 3000;
+const pause = false;
+const controls = true;
+const pager = true;
 const meltAppear = true;
 const dotAppear = false;
 const slideshowAppear = false;
 
 interface ISlider {
   speed: number;
+  pause: boolean;
+  controls: boolean;
+  pager: boolean;
   dotAppear: boolean;
   meltAppear: boolean;
   slideshowAppear: boolean;
@@ -15,7 +21,10 @@ interface ISlider {
 
 class Slider extends React.Component<ISlider, { current: number }> {
   speed: number;
-  slides: any; // React.ReactElement<any>[]
+  pause: boolean;
+  controls: boolean;
+  pager: boolean;
+  slides: React.ReactNodeArray; // React.ReactElement<any>[]
   slideStyle: string;
   dotAppear: boolean;
   meltAppear: boolean;
@@ -24,6 +33,9 @@ class Slider extends React.Component<ISlider, { current: number }> {
   constructor(props: ISlider) {
     super(props);
     this.speed = props.speed || 3000;
+    this.pause = props.pause || true;
+    this.controls = props.controls || false;
+    this.pager = props.pager || false;
     this.dotAppear = props.dotAppear || false;
     this.meltAppear = props.meltAppear || false;
     this.slideshowAppear = props.slideshowAppear || false;
@@ -34,12 +46,22 @@ class Slider extends React.Component<ISlider, { current: number }> {
     };
   }
 
+  createControls() {
+
+    return (
+      <div className="controls">
+        <img className="prevBtn" src={require('../assets/icons/icons-arrow.png')} title="Arrow" />
+        <img className="nextBtn" src={require('../assets/icons/icons-arrow.png')} title="Arrow" />
+      </div>
+    );
+  }
+
   autoplay() {
     setTimeout(() => {
       this.state.current + 1 < this.slides.length ?
         this.setState({ current: this.state.current + 1 }) :
         this.setState({ current: 0 });
-    // tslint:disable-next-line:align
+      // tslint:disable-next-line:align
     }, this.speed);
   }
 
@@ -58,18 +80,18 @@ class Slider extends React.Component<ISlider, { current: number }> {
       React.cloneElement(child, {
         key: index,
         className: (index === this.state.current ? `${this.animate()}` : 'slide'),
-        style: { border: '2px solid #E0E0E0' },
       }));
 
     return (
       <div id="slider">
         {this.slides}
+        {this.createControls()}
       </div>
     );
   }
 
   render() {
-    this.autoplay();
+    if (this.pause) this.autoplay();
 
     return (
       this.getSlides()
@@ -80,6 +102,9 @@ class Slider extends React.Component<ISlider, { current: number }> {
 const slider = (
   <Slider
     speed={speed}
+    pause={pause}
+    controls={controls}
+    pager={pager}
     meltAppear={meltAppear}
     dotAppear={dotAppear}
     slideshowAppear={slideshowAppear}
