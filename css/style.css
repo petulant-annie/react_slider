@@ -44,7 +44,7 @@
   transform: rotate(180deg);
 }
 
-.button {
+.button, .activeButton {
   display: inline-block;
   cursor: pointer;
   margin: 2px;
@@ -54,6 +54,10 @@
   border-radius: 50%;
   outline: none;
   border: 1 px solid rgb(146, 146, 146);
+}
+
+.activeButton{
+  background-color: #ffffffc5;
 }
 
 .slide {

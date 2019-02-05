@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { any } from 'prop-types';
 
 const speed = 3000;
 const pause = true;
@@ -41,6 +42,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
     this.dotAppear = props.dotAppear || false;
     this.meltAppear = props.meltAppear || false;
     this.slideshowAppear = props.slideshowAppear || false;
+    this.buttons = [];
     this.slideStyle = 'active';
 
     this.state = {
@@ -77,10 +79,22 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   createButtons() {
+    for (let i = 0; i < this.slides.length; i += 1) {
+      let classButton = 'button';
+      if (i === this.state.current) {
+        classButton = 'activeButton';
+      } else {
+        classButton = 'button';
+      }
+      this.buttons.push(<button className={classButton} key={i} />);
+      console.log(this.buttons.props);
+    }
+    console.log(this.buttons);
+    console.log(this.state.current);
 
     return (
       <div className="controlBar">
-        <button className="button" />
+        {this.buttons}
       </div>
     );
   }
