@@ -22,7 +22,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
   meltAppear: boolean;
   slideshowAppear: boolean;
   buttons: React.ReactNodeArray;
-  timeout: any;
+  timeout: NodeJS.Timeout;
   // onGenericEvent: (event: React.SyntheticEvent<{ value: string }>) => void;
 
   constructor(props: ISlider) {
@@ -46,7 +46,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
     if (this.controls) {
 
       const onControlsForward = (event: React.MouseEvent<HTMLElement>) => {
-        this.moveForvard();
+        this.moveForward();
       };
 
       const onControlsBackward = (event: React.MouseEvent<HTMLElement>) => {
@@ -90,7 +90,6 @@ class Slider extends React.Component<ISlider, { current: number }> {
         this.buttons.push(<button className={classButton} key={i} onClick={onPagerEvent} />);
         // this.setState({ current: this.state.current });
       }
-      console.log(this.state.current);
 
       return (
         <div className="controlBar">
@@ -100,7 +99,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
     }
   }
 
-  moveForvard(): void {
+  moveForward(): void {
     this.state.current + 1 < this.slides.length ?
       this.setState({ current: this.state.current + 1 }) :
       this.setState({ current: 0 });
@@ -113,15 +112,31 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   autoplay() {
-    this.timeout = setTimeout(() => { this.moveForvard(); }, this.speed);
+    this.timeout = setTimeout(() => { this.moveForward(); }, this.speed);
   }
 
   animate() {
     if (this.dotAppear) return 'dot-current';
     if (this.meltAppear) return 'melt-current';
-    if (this.slideshowAppear) return 'slideshow-current';
+    if (this.slideshowAppear) return 'slideshow-previous';
 
     return 'active';
+  }
+
+  addTouchListener(): any {
+    let startPoint: Touch;
+    let finalPoint: Touch;
+
+    const forward = (event: React.TouchEvent<HTMLDivElement>) => {
+      clearTimeout(this.timeout);
+      this.moveForward();
+      console.log(12);
+    };
+    const backward = (event: React.TouchEvent<HTMLDivElement>) => {
+      clearTimeout(this.timeout);
+      this.moveBackward();
+      console.log(111);
+    };
   }
 
   getSlides() {
@@ -134,7 +149,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
       }));
 
     return (
-      <div id="slider">
+      <div id="slider" onTouchEnd={this.addTouchListener()}>
         {this.slides}
         {this.createControls()}
         {this.createPager()}
@@ -157,9 +172,9 @@ const slider = (
     pause={false}
     controls={true}
     pager={true}
-    meltAppear={true}
+    meltAppear={false}
     dotAppear={false}
-    slideshowAppear={false}
+    slideshowAppear={true}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
