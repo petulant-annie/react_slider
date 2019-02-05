@@ -2,10 +2,10 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 const speed = 3000;
-const pause = false;
+const pause = true;
 const controls = true;
 const pager = true;
-const meltAppear = true;
+const meltAppear = false;
 const dotAppear = false;
 const slideshowAppear = false;
 
@@ -29,7 +29,8 @@ class Slider extends React.Component<ISlider, { current: number }> {
   dotAppear: boolean;
   meltAppear: boolean;
   slideshowAppear: boolean;
-  onGenericEvent: (event: React.SyntheticEvent<{value: string}>) => void;
+  buttons: any;
+  // onGenericEvent: (event: React.SyntheticEvent<{ value: string }>) => void;
 
   constructor(props: ISlider) {
     super(props);
@@ -49,20 +50,51 @@ class Slider extends React.Component<ISlider, { current: number }> {
 
   createControls() {
     if (this.controls) {
+
+      const onControlsForward = (event: React.MouseEvent<HTMLElement>) => {
+        this.moveForvard();
+      };
+
+      const onControlsBackward = (event: React.MouseEvent<HTMLElement>) => {
+        this.moveBackward();
+      };
+
       return (
         <div className="controls">
-          <img className="prevBtn" src={require('../assets/icons/icons-arrow.png')} />
-          <div>
-          <img className="nextBtn" src={require('../assets/icons/icons-arrow.png')} />
-        </div>
+          <img
+            onClick={onControlsBackward}
+            className="prevBtn"
+            src={require('../assets/icons/icons-arrow.png')}
+          />
+          <img
+            onClick={onControlsForward}
+            className="nextBtn"
+            src={require('../assets/icons/icons-arrow.png')}
+          />
         </div>
       );
     }
   }
+
+  createButtons() {
+
+    return (
+      <div className="controlBar">
+        <button className="button" />
+      </div>
+    );
+  }
+
   moveForvard(): void {
     this.state.current + 1 < this.slides.length ?
       this.setState({ current: this.state.current + 1 }) :
       this.setState({ current: 0 });
+  }
+
+  moveBackward() {
+    this.state.current - 1 >= 0 ?
+      this.setState({ current: this.state.current - 1 }) :
+      this.setState({ current: this.slides.length - 1 });
   }
 
   autoplay() {
@@ -90,12 +122,13 @@ class Slider extends React.Component<ISlider, { current: number }> {
       <div id="slider">
         {this.slides}
         {this.createControls()}
+        {this.createButtons()}
       </div>
     );
   }
 
   render() {
-    if (this.pause) this.autoplay();
+    if (!this.pause) this.autoplay();
 
     return (
       this.getSlides()
