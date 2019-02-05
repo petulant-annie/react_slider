@@ -46,10 +46,12 @@ class Slider extends React.Component<ISlider, { current: number }> {
     if (this.controls) {
 
       const onControlsForward = (event: React.MouseEvent<HTMLElement>) => {
+        clearTimeout(this.timeout);
         this.moveForward();
       };
 
       const onControlsBackward = (event: React.MouseEvent<HTMLElement>) => {
+        clearTimeout(this.timeout);
         this.moveBackward();
       };
 
@@ -123,18 +125,28 @@ class Slider extends React.Component<ISlider, { current: number }> {
     return 'active';
   }
 
-  getSlides() {
-    const { children } = this.props;
+  touchForward() {
     const forward = (event: React.TouchEvent<HTMLDivElement>) => {
       clearTimeout(this.timeout);
       this.moveForward();
       console.log(12);
     };
+
+    return forward;
+  }
+
+  touchBackward() {
     const backward = (event: React.TouchEvent<HTMLDivElement>) => {
       clearTimeout(this.timeout);
       this.moveBackward();
       console.log(122);
     };
+
+    return backward;
+  }
+
+  getSlides() {
+    const { children } = this.props;
 
     this.slides = React.Children.map(children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
@@ -142,8 +154,8 @@ class Slider extends React.Component<ISlider, { current: number }> {
         className: (index === this.state.current ? `${this.animate()}` : 'slide'),
       }));
 
-    return (// onTouchEnd={backward}
-      <div id="slider" onTouchStart={forward} >
+    return (// onTouchEnd={this.touchBackward()}
+      <div id="slider" onTouchStart={this.touchForward()} >
         {this.slides}
         {this.createControls()}
         {this.createPager()}
