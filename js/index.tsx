@@ -22,6 +22,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
   meltAppear: boolean;
   slideshowAppear: boolean;
   buttons: React.ReactNodeArray;
+  timeout: any;
   // onGenericEvent: (event: React.SyntheticEvent<{ value: string }>) => void;
 
   constructor(props: ISlider) {
@@ -34,6 +35,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
     this.meltAppear = props.meltAppear;
     this.slideshowAppear = props.slideshowAppear;
     this.slideStyle = 'active';
+    this.timeout;
 
     this.state = {
       current: 0,
@@ -83,17 +85,18 @@ class Slider extends React.Component<ISlider, { current: number }> {
 
         const onPagerEvent = (event: React.MouseEvent<HTMLElement>) => {
           this.setState({ current: i });
+          clearInterval(this.timeout);
         };
-
         this.buttons.push(<button className={classButton} key={i} onClick={onPagerEvent} />);
+        // this.setState({ current: this.state.current });
       }
+      console.log(this.state.current);
 
       return (
         <div className="controlBar">
           {this.buttons}
         </div>
       );
-
     }
   }
 
@@ -110,7 +113,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   autoplay() {
-    setTimeout(() => { this.moveForvard(); }, this.speed);
+    this.timeout = setTimeout(() => { this.moveForvard(); }, this.speed);
   }
 
   animate() {
