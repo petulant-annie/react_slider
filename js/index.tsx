@@ -1,14 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { any } from 'prop-types';
-
-const speed = 3000;
-const pause = true;
-const controls = true;
-const pager = true;
-const meltAppear = false;
-const dotAppear = false;
-const slideshowAppear = false;
 
 interface ISlider {
   speed: number;
@@ -30,19 +21,18 @@ class Slider extends React.Component<ISlider, { current: number }> {
   dotAppear: boolean;
   meltAppear: boolean;
   slideshowAppear: boolean;
-  buttons: any;
+  buttons: React.ReactNodeArray;
   // onGenericEvent: (event: React.SyntheticEvent<{ value: string }>) => void;
 
   constructor(props: ISlider) {
     super(props);
     this.speed = props.speed || 3000;
-    this.pause = props.pause || true;
-    this.controls = props.controls || false;
-    this.pager = props.pager || false;
-    this.dotAppear = props.dotAppear || false;
-    this.meltAppear = props.meltAppear || false;
-    this.slideshowAppear = props.slideshowAppear || false;
-    this.buttons = [];
+    this.pause = props.pause;
+    this.controls = props.controls;
+    this.pager = props.pager;
+    this.dotAppear = props.dotAppear;
+    this.meltAppear = props.meltAppear;
+    this.slideshowAppear = props.slideshowAppear;
     this.slideStyle = 'active';
 
     this.state = {
@@ -78,25 +68,33 @@ class Slider extends React.Component<ISlider, { current: number }> {
     }
   }
 
-  createButtons() {
-    for (let i = 0; i < this.slides.length; i += 1) {
-      let classButton = 'button';
-      if (i === this.state.current) {
-        classButton = 'activeButton';
-      } else {
-        classButton = 'button';
-      }
-      this.buttons.push(<button className={classButton} key={i} />);
-      console.log(this.buttons.props);
-    }
-    console.log(this.buttons);
-    console.log(this.state.current);
+  createPager() {
+    if (this.pager) {
+      this.buttons = [];
 
-    return (
-      <div className="controlBar">
-        {this.buttons}
-      </div>
-    );
+      for (let i = 0; i < this.slides.length; i += 1) {
+        let classButton = 'button';
+
+        if (i === this.state.current) {
+          classButton = 'activeButton';
+        } else {
+          classButton = 'button';
+        }
+
+        const onPagerEvent = (event: React.MouseEvent<HTMLElement>) => {
+          this.setState({ current: i });
+        };
+
+        this.buttons.push(<button className={classButton} key={i} onClick={onPagerEvent} />);
+      }
+
+      return (
+        <div className="controlBar">
+          {this.buttons}
+        </div>
+      );
+
+    }
   }
 
   moveForvard(): void {
@@ -136,7 +134,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
       <div id="slider">
         {this.slides}
         {this.createControls()}
-        {this.createButtons()}
+        {this.createPager()}
       </div>
     );
   }
@@ -152,13 +150,13 @@ class Slider extends React.Component<ISlider, { current: number }> {
 
 const slider = (
   <Slider
-    speed={speed}
-    pause={pause}
-    controls={controls}
-    pager={pager}
-    meltAppear={meltAppear}
-    dotAppear={dotAppear}
-    slideshowAppear={slideshowAppear}
+    speed={3000}
+    pause={false}
+    controls={true}
+    pager={true}
+    meltAppear={true}
+    dotAppear={false}
+    slideshowAppear={false}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
