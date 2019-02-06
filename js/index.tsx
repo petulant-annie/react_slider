@@ -124,6 +124,12 @@ class Slider extends React.Component<ISlider, { current: number }> {
     return 'active';
   }
 
+  hideSlides() {
+    // if (this.slideshowAppear) return 'slideshow-current';
+
+    return 'slide';
+  }
+
   handleTouchStart = (event: any) => {
     this.startPoint = event.changedTouches[0].clientX;
   }
@@ -141,10 +147,14 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   getSlides() {
-    this.slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
+    const children = this.props.children;
+
+    this.slides = React.Children.map(children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
         key: index,
-        className: (index === this.state.current ? `${this.animate()}` : 'slide'),
+        className: (index === this.state.current ?
+          `${this.animate()}` :
+          `${this.hideSlides()}`),
       }));
 
     return (
@@ -168,7 +178,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
 const slider = (
   <Slider
     speed={3000}
-    pause={false}
+    pause={true}
     controls={true}
     pager={true}
     animation={'slideshowAppear'}
