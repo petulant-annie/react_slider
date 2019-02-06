@@ -35,6 +35,14 @@
   z-index: 5;
 }
 
+.prevBtn:hover {
+  transform: scale(0.9, 0.9);
+}
+
+.nextBtn:hover {
+  transform: scale(0.9, 0.9) rotate(180deg);
+}
+
 .prevBtn {
   left: 0;
 }
@@ -56,7 +64,7 @@
   border: 1 px solid rgb(146, 146, 146);
 }
 
-.activeButton{
+.activeButton {
   background-color: #ffffffc5;
 }
 
