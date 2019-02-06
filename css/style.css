@@ -9,30 +9,35 @@
 
 #slider {
   margin: 0 auto;
+  height: 100%;
   display: inline-block;
   position: relative;
   border: 2px solid #E0E0E0;
-  height: 100%;
+  overflow: hidden;
 }
 
 .controlBar {
+  padding: 10px;
   position: absolute;
   bottom: 0;
   left: 50%;
-  padding: 10px;
   z-index: 5;
 }
 
 .prevBtn, .nextBtn {
   width: 45px;
   height: 45px;
-  opacity: 0.5;
-  cursor: pointer;
-  position: absolute;
-  top: calc(50% - 40px);
   margin: auto;
   padding: 15px;
+  position: absolute;
+  opacity: 0.5;
+  top: calc(50% - 40px);
+  cursor: pointer;
   z-index: 5;
+}
+
+.prevBtn {
+  left: 0;
 }
 
 .prevBtn:hover {
@@ -43,25 +48,21 @@
   transform: scale(0.9, 0.9) rotate(180deg);
 }
 
-.prevBtn {
-  left: 0;
-}
-
 .nextBtn {
   right: 0;
   transform: rotate(180deg);
 }
 
 .button, .activeButton {
-  display: inline-block;
-  cursor: pointer;
   margin: 2px;
   height: 10px;
   width: 10px;
-  background-color: #46464671;
-  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
   outline: none;
+  background-color: #46464671;
   border: 1 px solid rgb(146, 146, 146);
+  border-radius: 50%;
 }
 
 .activeButton {
@@ -75,6 +76,13 @@
 .active {
   margin: 0 auto;
   padding: 5px;
+  display: inline-block;
+  font-size: 0;
+}
+
+.melt-previous {
+  margin: 0 auto;
+  padding: 5px;
   font-size: 0;
   display: inline-block;
 }
@@ -82,6 +90,8 @@
 .melt-current {
   margin: 0 auto;
   padding: 5px;
+  top: 0;
+  position: absolute;
   font-size: 0;
   animation-name: melt-appear;
   animation-duration: 1s;
@@ -89,7 +99,7 @@
 
 @keyframes melt-appear {
   0% {
-    opacity: 0.7;
+    opacity: 0;
   }
   100% {
     opacity: 1;
@@ -99,11 +109,11 @@
 .dot-current {
   margin: 0 auto;
   padding: 5px;
-  font-size: 0;
+  position: static;
   display: inline-block;
+  font-size: 0;
   animation-name: dot-current;
   animation-duration: 0.5s;
-  position: static;
 }
 
 @keyframes dot-current {
@@ -118,10 +128,10 @@
 .slideshow-previous {
   margin: 0 auto;
   padding: 5px;
-  font-size: 0;
   display: inline-block;
-  animation-duration: 0.5s;
   position: relative;
+  font-size: 0;
+  animation-duration: 0.5s;
   z-index: 2;
 }
 
@@ -135,11 +145,11 @@
 
 @keyframes slide-out-to-left {
   0% {
-    margin-left: 0%;
+    right: 0;
     width: 100%;
   }
   100% {
-    margin-left: -100%;
+    right: 100%;
     width: 100%;
   }
 }
@@ -158,9 +168,10 @@
 .slideshow-current {
   margin: 0 auto;
   padding: 5px;
+  top: 0;
+  position: absolute;
   font-size: 0;
   animation-duration: 0.5s;
-  position: absolute;
   z-index: 3;
 }
 

@@ -5,15 +5,15 @@ interface ISlider {
   speed: number;
   pause: boolean;
   controls: boolean;
-  pager: boolean;
+  pagination: boolean;
   animation: string;
 }
 
-class Slider extends React.Component<ISlider, { current: number }> {
+class Slider extends React.Component<ISlider, { current: number, previous: number }> {
   speed: number;
   pause: boolean;
   controls: boolean;
-  pager: boolean;
+  pagination: boolean;
   slides: React.ReactNodeArray;
   slideStyle: string;
   animation: string;
@@ -29,7 +29,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
     this.speed = props.speed || 3000;
     this.pause = props.pause;
     this.controls = props.controls;
-    this.pager = props.pager;
+    this.pagination = props.pagination;
     this.animation = props.animation;
     this.dotAppear = (props.animation === 'dotAppear');
     this.meltAppear = (props.animation === 'meltAppear');
@@ -40,6 +40,7 @@ class Slider extends React.Component<ISlider, { current: number }> {
 
     this.state = {
       current: 0,
+      previous: React.Children.count(this.props.children) - 1,
     };
   }
 
@@ -72,8 +73,8 @@ class Slider extends React.Component<ISlider, { current: number }> {
     }
   }
 
-  createPager() {
-    if (this.pager) {
+  createPagination() {
+    if (this.pagination) {
       this.buttons = [];
 
       for (let i = 0; i < this.slides.length; i += 1) {
@@ -85,11 +86,11 @@ class Slider extends React.Component<ISlider, { current: number }> {
           classButton = 'button';
         }
 
-        const onPagerEvent = (e: React.MouseEvent<HTMLElement>) => {
-          this.setState({ current: i });
+        const onPaginationClick = (e: React.MouseEvent<HTMLElement>) => {
+          this.setState({ current: i, previous: this.state.current });
           clearInterval(this.timeout);
         };
-        this.buttons.push(<button className={classButton} key={i} onClick={onPagerEvent} />);
+        this.buttons.push(<button className={classButton} key={i} onClick={onPaginationClick} />);
       }
 
       return (
@@ -102,30 +103,54 @@ class Slider extends React.Component<ISlider, { current: number }> {
 
   moveForward(): void {
     this.state.current + 1 < this.slides.length ?
-      this.setState({ current: this.state.current + 1 }) :
-      this.setState({ current: 0 });
+      this.setState({ current: this.state.current + 1, previous: this.state.current }) :
+      this.setState({ current: 0, previous: this.slides.length - 1 });
   }
 
   moveBackward() {
     this.state.current - 1 >= 0 ?
-      this.setState({ current: this.state.current - 1 }) :
-      this.setState({ current: this.slides.length - 1 });
+      this.setState({ current: this.state.current - 1, previous: this.state.current }) :
+      this.setState({ current: this.slides.length - 1, previous: 0 });
   }
 
   autoplay() {
     this.timeout = setTimeout(() => { this.moveForward(); }, this.speed);
   }
 
-  animate() {
-    if (this.dotAppear) return 'dot-current';
-    if (this.meltAppear) return 'melt-current';
-    if (this.slideshowAppear) return 'slideshow-previous';
-
-    return 'active';
-  }
-
-  hideSlides() {
-    // if (this.slideshowAppear) return 'slideshow-current';
+  animate(index: number) {
+    const loopForward = (this.state.current === 0 &&
+      this.state.previous === React.Children.count(this.props.children) - 1);
+    const loopBackward = (this.state.current ===
+      React.Children.count(this.props.children) - 1 && this.state.previous === 0);
+    if (index === this.state.previous) {
+      switch (true) {
+        case (this.meltAppear):
+          return 'melt-previous';
+        case (this.slideshowAppear):
+          if ((this.state.previous < this.state.current && !loopBackward) || loopForward) {
+            return 'slideshow-previous slide-out-to-left';
+          } if (this.state.previous > this.state.current || loopBackward) {
+            return 'slideshow-previous slide-out-to-right';
+          }
+        default: return 'slide';
+      }
+    }
+    if (index === this.state.current) {
+      switch (true) {
+        case (this.dotAppear):
+          return 'dot-current';
+        case (this.meltAppear):
+          return 'melt-current';
+        case (this.slideshowAppear):
+          if ((this.state.previous < this.state.current && !loopBackward) || loopForward) {
+            return 'slideshow-current slide-in-from-right';
+          } if (this.state.previous > this.state.current || loopBackward) {
+            return 'slideshow-current slide-in-from-left';
+          }
+        default:
+          return 'active';
+      }
+    }
 
     return 'slide';
   }
@@ -147,21 +172,17 @@ class Slider extends React.Component<ISlider, { current: number }> {
   }
 
   getSlides() {
-    const children = this.props.children;
-
-    this.slides = React.Children.map(children, (child: JSX.Element, index: number) =>
+    this.slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
         key: index,
-        className: (index === this.state.current ?
-          `${this.animate()}` :
-          `${this.hideSlides()}`),
+        className: `${this.animate(index)}`,
       }));
 
     return (
       <div id="slider" onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>
         {this.slides}
         {this.createControls()}
-        {this.createPager()}
+        {this.createPagination()}
       </div>
     );
   }
@@ -178,10 +199,10 @@ class Slider extends React.Component<ISlider, { current: number }> {
 const slider = (
   <Slider
     speed={3000}
-    pause={true}
+    pause={false}
     controls={true}
-    pager={true}
-    animation={'slideshowAppear'}
+    pagination={true}
+    animation={'meltAppear'}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
