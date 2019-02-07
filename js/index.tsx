@@ -58,6 +58,12 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     return backward;
   }
 
+  stopClickEvent() {
+    const stopEvent = (e: React.SyntheticEvent<HTMLElement>) => e.stopPropagation();
+
+    return stopEvent;
+  }
+
   handleStopEvent() {
     const stopEvent = (e: React.TouchEvent<HTMLDivElement>) => e.stopPropagation();
 
@@ -70,6 +76,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
         <div className="controls">
           <img
             onClick={this.onControlsBackward()}
+            onMouseDown={this.stopClickEvent()}
             onTouchStart={this.handleStopEvent()}
             onTouchEnd={this.handleStopEvent()}
             className="prevBtn"
@@ -77,6 +84,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
           />
           <img
             onClick={this.onControlsForward()}
+            onMouseDown={this.stopClickEvent()}
             onTouchStart={this.handleStopEvent()}
             onTouchEnd={this.handleStopEvent()}
             className="nextBtn"
@@ -201,8 +209,9 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     return (
       <div
         id="slider"
-        onClick={this.onControlsForward()}
-        onTouchStart={this.handleTouchStart}
+        onClick={this.stopClickEvent()}
+        onMouseDown={this.onControlsForward()}
+        onTouchStart={this.handleTouchStart && this.stopClickEvent()}
         onTouchEnd={this.handleTouchEnd}
       >
         {slides}
