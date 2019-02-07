@@ -236,7 +236,7 @@ const slider = (
     pause={false}
     controls={true}
     pagination={true}
-    animation={'slideshowAppear'}
+    animation={'meltAppear'}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
