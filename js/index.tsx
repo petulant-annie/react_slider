@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
+const controlArrow = require('../assets/icons/icons-arrow.png');
+
 interface ISlider {
   speed: number;
   pause: boolean;
@@ -14,13 +16,10 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
   pause: boolean;
   controls: boolean;
   pagination: boolean;
-  slides: React.ReactNodeArray;
-  slideStyle: string;
   animation: string;
   dotAppear: boolean;
   meltAppear: boolean;
   slideshowAppear: boolean;
-  buttons: React.ReactNodeArray;
   timeout: NodeJS.Timeout;
   startPoint: number;
 
@@ -34,9 +33,6 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     this.dotAppear = (props.animation === 'dotAppear');
     this.meltAppear = (props.animation === 'meltAppear');
     this.slideshowAppear = (props.animation === 'slideshowAppear');
-    this.slideStyle = 'active';
-    this.timeout;
-    this.startPoint;
 
     this.state = {
       current: 0,
@@ -44,40 +40,60 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     };
   }
 
+  onControlsForward() {
+    const forward = (e: React.MouseEvent<HTMLElement>) => {
+      clearTimeout(this.timeout);
+      this.moveForward();
+    };
+
+    return forward;
+  }
+
+  onControlsBackward() {
+    const backward = (e: React.MouseEvent<HTMLElement>) => {
+      clearTimeout(this.timeout);
+      this.moveBackward();
+    };
+
+    return backward;
+  }
+
+  handleStopEvent() {
+    const stopEvent = (e: React.TouchEvent<HTMLDivElement>) => e.stopPropagation();
+
+    return stopEvent;
+  }
+
   createControls() {
     if (this.controls) {
-      const onControlsForward = (e: React.MouseEvent<HTMLElement>) => {
-        clearTimeout(this.timeout);
-        this.moveForward();
-      };
-
-      const onControlsBackward = (e: React.MouseEvent<HTMLElement>) => {
-        clearTimeout(this.timeout);
-        this.moveBackward();
-      };
-
       return (
         <div className="controls">
           <img
-            onClick={onControlsBackward}
+            onClick={this.onControlsBackward()}
+            onTouchStart={this.handleStopEvent()}
+            onTouchEnd={this.handleStopEvent()}
             className="prevBtn"
-            src={require('../assets/icons/icons-arrow.png')}
+            src={controlArrow}
           />
           <img
-            onClick={onControlsForward}
+            onClick={this.onControlsForward()}
+            onTouchStart={this.handleStopEvent()}
+            onTouchEnd={this.handleStopEvent()}
             className="nextBtn"
-            src={require('../assets/icons/icons-arrow.png')}
+            src={controlArrow}
           />
         </div>
       );
     }
+
+    return null;
   }
 
   createPagination() {
     if (this.pagination) {
-      this.buttons = [];
+      const buttons = [];
 
-      for (let i = 0; i < this.slides.length; i += 1) {
+      for (let i = 0; i < React.Children.count(this.props.children); i += 1) {
         let classButton = 'button';
 
         if (i === this.state.current) {
@@ -90,38 +106,42 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
           this.setState({ current: i, previous: this.state.current });
           clearInterval(this.timeout);
         };
-        this.buttons.push(<button className={classButton} key={i} onClick={onPaginationClick} />);
+        buttons.push(<button className={classButton} key={i} onClick={onPaginationClick} />);
       }
 
       return (
         <div className="controlBar">
-          {this.buttons}
+          {buttons}
         </div>
       );
     }
+
+    return null;
   }
 
-  moveForward(): void {
-    this.state.current + 1 < this.slides.length ?
+  moveForward() {
+    this.state.current + 1 < React.Children.count(this.props.children) ?
       this.setState({ current: this.state.current + 1, previous: this.state.current }) :
-      this.setState({ current: 0, previous: this.slides.length - 1 });
+      this.setState({ current: 0, previous: React.Children.count(this.props.children) - 1 });
   }
 
   moveBackward() {
     this.state.current - 1 >= 0 ?
       this.setState({ current: this.state.current - 1, previous: this.state.current }) :
-      this.setState({ current: this.slides.length - 1, previous: 0 });
+      this.setState({ current: React.Children.count(this.props.children) - 1, previous: 0 });
   }
 
   autoplay() {
-    this.timeout = setTimeout(() => { this.moveForward(); }, this.speed);
+    this.timeout = setTimeout(() => this.moveForward(), this.speed);
   }
 
   animate(index: number) {
     const loopForward = (this.state.current === 0 &&
       this.state.previous === React.Children.count(this.props.children) - 1);
+
     const loopBackward = (this.state.current ===
       React.Children.count(this.props.children) - 1 && this.state.previous === 0);
+
     if (index === this.state.previous) {
       switch (true) {
         case (this.meltAppear):
@@ -155,32 +175,37 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     return 'slide';
   }
 
-  handleTouchStart = (event: any) => {
+  handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     this.startPoint = event.changedTouches[0].clientX;
   }
 
-  handleTouchEnd = (event: any) => {
+  handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+
     const end = event.changedTouches[0].clientX;
 
+    clearInterval(this.timeout);
     if (this.startPoint - 100 >= end || this.startPoint === end) {
-      clearInterval(this.timeout);
       this.moveForward();
     } else if (this.startPoint + 100 <= end) {
-      clearInterval(this.timeout);
       this.moveBackward();
     }
   }
 
   getSlides() {
-    this.slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
+    const slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
         key: index,
         className: `${this.animate(index)}`,
       }));
 
     return (
-      <div id="slider" onTouchStart={this.handleTouchStart} onTouchEnd={this.handleTouchEnd}>
-        {this.slides}
+      <div
+        id="slider"
+        onClick={this.onControlsForward()}
+        onTouchStart={this.handleTouchStart}
+        onTouchEnd={this.handleTouchEnd}
+      >
+        {slides}
         {this.createControls()}
         {this.createPagination()}
       </div>
@@ -202,7 +227,7 @@ const slider = (
     pause={false}
     controls={true}
     pagination={true}
-    animation={'meltAppear'}
+    animation={'slideshowAppear'}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />
