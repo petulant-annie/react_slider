@@ -11,7 +11,13 @@ interface ISlider {
   animation: string;
 }
 
-class Slider extends React.Component<ISlider, { current: number, previous: number }> {
+interface ISliderState {
+  current: number;
+  previous: number;
+  eventsAccess: any;
+}
+
+class Slider extends React.Component<ISlider, ISliderState> {
   speed: number;
   pause: boolean;
   controls: boolean;
@@ -37,6 +43,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     this.state = {
       current: 0,
       previous: React.Children.count(this.props.children) - 1,
+      eventsAccess: 'auto',
     };
   }
 
@@ -71,6 +78,11 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
   }
 
   createControls() {
+
+    const events: React.CSSProperties = {
+      pointerEvents: this.state.eventsAccess,
+    };
+
     if (this.controls) {
       return (
         <div className="controls">
@@ -81,6 +93,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
             onTouchEnd={this.handleStopEvent()}
             className="prevBtn"
             src={controlArrow}
+            style={events}
           />
           <img
             onClick={this.onControlsForward()}
@@ -89,12 +102,17 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
             onTouchEnd={this.handleStopEvent()}
             className="nextBtn"
             src={controlArrow}
+            style={events}
           />
         </div>
       );
     }
 
     return null;
+  }
+
+  activateControls() {
+    setTimeout(() => this.setState({ eventsAccess: 'auto' }), 1000);
   }
 
   createPagination() {
@@ -105,7 +123,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
         let classButton = 'button';
 
         if (i === this.state.current) {
-          classButton = 'activeButton';
+          classButton = 'button activeButton';
         } else {
           classButton = 'button';
         }
@@ -129,18 +147,40 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
 
   moveForward() {
     this.state.current + 1 < React.Children.count(this.props.children) ?
-      this.setState({ current: this.state.current + 1, previous: this.state.current }) :
-      this.setState({ current: 0, previous: React.Children.count(this.props.children) - 1 });
+      this.setState({
+        current: this.state.current + 1,
+        previous: this.state.current, eventsAccess: 'none',
+      }) :
+      this.setState({
+        current: 0,
+        previous: React.Children.count(this.props.children) - 1, eventsAccess: 'none',
+      });
+    const disable = setTimeout(() => {
+      this.setState({ eventsAccess: 'auto' });
+      clearTimeout(disable);
+    }, 1000);
   }
 
   moveBackward() {
     this.state.current - 1 >= 0 ?
-      this.setState({ current: this.state.current - 1, previous: this.state.current }) :
-      this.setState({ current: React.Children.count(this.props.children) - 1, previous: 0 });
+      this.setState({
+        current: this.state.current - 1,
+        previous: this.state.current, eventsAccess: 'none',
+      }) :
+      this.setState({
+        current: React.Children.count(this.props.children) - 1,
+        previous: 0, eventsAccess: 'none',
+      });
+    const disable = setTimeout(() => {
+      this.setState({ eventsAccess: 'auto' });
+      clearTimeout(disable);
+    }, 1000);
   }
 
   autoplay() {
-    this.timeout = setTimeout(() => this.moveForward(), this.speed);
+    if (this.state.eventsAccess === 'auto') {
+      this.timeout = setTimeout(() => this.moveForward(), this.speed);
+    }
   }
 
   animate(index: number) {
@@ -153,12 +193,12 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     if (index === this.state.previous) {
       switch (true) {
         case (this.meltAppear):
-          return 'melt-previous';
+          return 'general-style melt-previous';
         case (this.slideshowAppear):
           if ((this.state.previous < this.state.current && !loopBackward) || loopForward) {
-            return 'slideshow-previous slide-out-to-left';
+            return 'general-style slideshow-previous slide-out-to-left';
           } if (this.state.previous > this.state.current || loopBackward) {
-            return 'slideshow-previous slide-out-to-right';
+            return 'general-style slideshow-previous slide-out-to-right';
           }
         default: return 'slide';
       }
@@ -166,17 +206,17 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
     if (index === this.state.current) {
       switch (true) {
         case (this.dotAppear):
-          return 'dot-current';
+          return 'general-style dot-current';
         case (this.meltAppear):
-          return 'melt-current';
+          return 'general-style melt-current';
         case (this.slideshowAppear):
           if ((this.state.previous < this.state.current && !loopBackward) || loopForward) {
-            return 'slideshow-current slide-in-from-right';
+            return 'general-style slideshow-current slide-in-from-right';
           } if (this.state.previous > this.state.current || loopBackward) {
-            return 'slideshow-current slide-in-from-left';
+            return 'general-style slideshow-current slide-in-from-left';
           }
         default:
-          return 'active';
+          return 'general-style active';
       }
     }
 
@@ -200,6 +240,10 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
   }
 
   getSlides() {
+    const events: React.CSSProperties = {
+      pointerEvents: this.state.eventsAccess,
+    };
+
     const slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
       React.cloneElement(child, {
         key: index,
@@ -213,6 +257,7 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
         onMouseDown={this.onControlsForward()}
         onTouchStart={this.handleTouchStart && this.stopClickEvent()}
         onTouchEnd={this.handleTouchEnd}
+        style={events}
       >
         {slides}
         {this.createControls()}
@@ -233,10 +278,10 @@ class Slider extends React.Component<ISlider, { current: number, previous: numbe
 const slider = (
   <Slider
     speed={3000}
-    pause={false}
+    pause={true}
     controls={true}
     pagination={true}
-    animation={'meltAppear'}
+    animation={'slideshowAppear'}
   >
     <div>
       <img src={require('../assets/images/lake.jpg')} title="Lake" />

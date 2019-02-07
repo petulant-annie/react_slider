@@ -10,10 +10,13 @@
 #slider {
   border: 2px solid #E0E0E0;
   display: inline-block;
+  font-size: 0;
   height: 100%;
   margin: 0 auto;
   overflow: hidden;
+  padding: 5px;
   position: relative;
+  vertical-align: top;
 }
 
 .controlBar {
@@ -24,8 +27,7 @@
   z-index: 5;
 }
 
-.prevBtn, 
-.nextBtn {
+.prevBtn, .nextBtn {
   cursor: pointer;
   height: 45px;
   margin: auto;
@@ -54,8 +56,7 @@
   transform: rotate(180deg);
 }
 
-.button, 
-.activeButton {
+.button {
   background-color: #46464671;
   border: 1px solid #929292;
   border-radius: 50%;
@@ -77,30 +78,20 @@
 
 .active {
   display: inline-block;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
 }
 
 .melt-previous {
   display: inline-block;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
 }
 
 .melt-current {
   animation-name: melt-appear;
   animation-duration: 1s;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
   position: absolute;
   top: 0;
 }
 
 @keyframes melt-appear {
-  
   0% {
     opacity: 0;
   }
@@ -113,14 +104,10 @@
   animation-name: dot-current;
   animation-duration: 0.5s;
   display: inline-block;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
   position: static;
 }
 
 @keyframes dot-current {
-
   from {
     transform: scale(0);
   }
@@ -132,9 +119,6 @@
 .slideshow-previous {
   animation-duration: 0.5s;
   display: inline-block;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
   position: relative;
   z-index: 2;
 }
@@ -148,7 +132,6 @@
 }
 
 @keyframes slide-out-to-left {
-
   0% {
     right: 0;
     width: 100%;
@@ -160,7 +143,6 @@
 }
 
 @keyframes slide-out-to-right {
-
   0% {
     left: 0;
     width: 100%;
@@ -173,9 +155,6 @@
 
 .slideshow-current {
   animation-duration: 0.5s;
-  font-size: 0;
-  margin: 0 auto;
-  padding: 5px;
   position: absolute;
   top: 0;
   z-index: 3;
@@ -190,7 +169,6 @@
 }
 
 @keyframes slide-in-from-right {
-
   0% {
     margin-left: 100%;
     width: 100%;
@@ -202,7 +180,6 @@
 }
 
 @keyframes slide-in-from-left {
-
   0% {
     left: -100%;
     width: 100%;
