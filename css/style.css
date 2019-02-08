@@ -8,15 +8,13 @@
 }
 
 #slider {
-  border: 2px solid #E0E0E0;
+  border: 5px solid #E0E0E0;
   display: inline-block;
   font-size: 0;
   height: 100%;
   margin: 0 auto;
   overflow: hidden;
-  padding: 5px;
   position: relative;
-  vertical-align: top;
 }
 
 .controlBar {
@@ -27,7 +25,8 @@
   z-index: 5;
 }
 
-.prevBtn, .nextBtn {
+.prevBtn, 
+.nextBtn {
   cursor: pointer;
   height: 45px;
   margin: auto;
