@@ -79,7 +79,7 @@ class Slider extends React.Component<ISlider, ISliderState> {
 
   createControls() {
     const events: React.CSSProperties = {
-      pointerEvents: (this.state.eventsAccess) ? 'auto' : 'none'
+      pointerEvents: (this.state.eventsAccess) ? 'auto' : 'none',
     };
 
     if (this.controls) {
@@ -161,10 +161,7 @@ class Slider extends React.Component<ISlider, ISliderState> {
         current: 0,
         previous: React.Children.count(this.props.children) - 1, eventsAccess: false,
       });
-    const disable = setTimeout(() => {
-      this.setState({ eventsAccess: true });
-      clearTimeout(disable);
-    }, 1000);
+    this.activateControls();
   }
 
   moveBackward() {
@@ -177,10 +174,7 @@ class Slider extends React.Component<ISlider, ISliderState> {
         current: React.Children.count(this.props.children) - 1,
         previous: 0, eventsAccess: false,
       });
-    const disable = setTimeout(() => {
-      this.setState({ eventsAccess: true });
-      clearTimeout(disable);
-    }, 1000);
+    this.activateControls();
   }
 
   autoplay() {
@@ -247,7 +241,7 @@ class Slider extends React.Component<ISlider, ISliderState> {
 
   getSlides() {
     const events: React.CSSProperties = {
-      pointerEvents: (this.state.eventsAccess) ? 'auto' : 'none'
+      pointerEvents: (this.state.eventsAccess) ? 'auto' : 'none',
     };
 
     const slides = React.Children.map(this.props.children, (child: JSX.Element, index: number) =>
