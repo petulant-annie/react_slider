@@ -253,9 +253,8 @@ class Slider extends React.Component<ISlider, ISliderState> {
     return (
       <div
         id="slider"
-        onClick={this.stopClickEvent()}
         onMouseDown={this.onControlsForward()}
-        onTouchStart={this.handleTouchStart && this.stopClickEvent()}
+        onTouchStart={this.handleTouchStart}
         onTouchEnd={this.handleTouchEnd}
         style={events}
       >
